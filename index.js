@@ -57,11 +57,17 @@ server.delete('/api/users/:id', (req, res) => {
 
 server.put('/api/users/:id', (req, res) => {
     const { id } = req.params;
-    const userInfo = req.body
+    const userInfo = req.body;
     db.update(id, userInfo)
     .then(updated => {
         if (updated) {
-            res.status(200).json(userInfo)
+            db.findById(id)
+            .then(user => {
+                res.status(201).json(user);
+            })
+            .catch(err => {
+                res.status(501).json({ message: 'Something went wrong'})
+            })
         } else {
             res.status(404).json({ message: "User not found"})
         }
