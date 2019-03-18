@@ -30,13 +30,18 @@ server.post('/api/users', (req, res) => {
     if (!req.body.bio || !req.body.name) {
         res.status(400).json({ message: 'Please provide name and bio for the user.'})
     }
-    db.insert(req.body)
-    .then(user => {
-        res.status(201).json(req.body);
+    else {
+        db.insert(req.body)
+    .then(edited => {
+        db.findById(edited.id)
+        .then(user => {
+            res.status(201).json(user);
+        })
     })
     .catch(err => {
         res.status(500).json({ message: 'There was an error while saving the user to the database'})
     })
+    }
 })
 
 server.delete('/api/users/:id', (req, res) => {
@@ -60,7 +65,8 @@ server.put('/api/users/:id', (req, res) => {
     if (!userInfo.name || !userInfo.bio) {
         res.status(400).json({ message: 'Please provide name and bio for the user.'})
     }
-    db.update(id, userInfo)
+    else {
+        db.update(id, userInfo)
     .then(updated => {
         db.findById(id)
             .then(user => {
@@ -73,6 +79,7 @@ server.put('/api/users/:id', (req, res) => {
     .catch(err => {
         res.status(500).json({ message: 'The user information could not be modified.'})
     })
+    }
 })
 
 server.listen(5000, () => {
